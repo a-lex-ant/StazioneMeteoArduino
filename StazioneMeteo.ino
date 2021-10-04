@@ -9,7 +9,7 @@
 #define DELAY_FRAME_DISPLAY  //ritardo tra una frame e l'altra dell'animazione del display
 #define IMAGE_WIDTH 47  //lunghezza in pixels dello schermo
 #define IMAGE_HEIGHT 60 //altezza in pixels dello schermo
-#define NAN_CHECK - 999.99
+#define NAN - 999.99
 #define DELA 5000 //DELAY
 #define BMP_SCK 13
 #define BMP_MISO 12
@@ -68,7 +68,7 @@ int calcolaVariazione(float nuovo, float &soglia)
   Serial.println(nuovo);
   */
 
-  if (nuovo == NAN_CHECK) return 0;
+  if (nuovo == NAN) return 0;
 
   if (round(nuovo) > (soglia + (soglia *(10 / 100))))
   {
@@ -138,7 +138,7 @@ void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVari
   u8g2.print("val");
 
   //val e var Hum
-  if (valhum != NAN_CHECK)
+  if (valhum != NAN)
   {
     u8g2.drawStr(40, 31, String(valhum).c_str());
     u8g2.drawUTF8(40, 43, esitoVariazione(humVariazione).c_str());
@@ -149,7 +149,7 @@ void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVari
     u8g2.print(F("n/a"));
   }
   //val e var temp
-  if (valtemp != NAN_CHECK)
+  if (valtemp != NAN)
   {
     u8g2.drawStr(95, 31, String(valtemp).c_str());
     u8g2.drawUTF8(95, 43, esitoVariazione(tempVariazione).c_str());
@@ -161,7 +161,7 @@ void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVari
   }
 
   //val e var pres
-  if (valpres != NAN_CHECK)
+  if (valpres != NAN)
   {
     int valpres_int = valpres;
     u8g2.drawStr(70, 31, String(valpres_int).c_str());
@@ -214,15 +214,15 @@ void loop()
 
   if (isnan(humFloat))
   {
-    humFloat = NAN_CHECK;
+    humFloat = NAN;
   }
   if (isnan(tempFloat))
   {
-    tempFloat = NAN_CHECK;
+    tempFloat = NAN;
   }
   if (isnan(presFloat))
   {
-    presFloat = NAN_CHECK;
+    presFloat = NAN;
   }
 
   int humVariazione = calcolaVariazione(humFloat, soglia_umidita);

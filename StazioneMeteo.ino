@@ -54,30 +54,32 @@ DHT dht(PIN_DHT, DHT_TYPE);
 Adafruit_BMP280 bmp(BMP_CS, BMP_MOSI, BMP_MISO, BMP_SCK);
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-byte soglia_temperatura = 0;
-byte soglia_pressione = 0;
-byte soglia_umidita = 0;
+float soglia_temperatura = 0;
+float soglia_pressione = 0;
+float soglia_umidita = 0;
 
-int calcolaVariazione(byte nuovo, byte &soglia)
+int calcolaVariazione(float nuovo, float &soglia)
 {
 
+  /*
   Serial.print("valore soglia:");
   Serial.println(soglia);
   Serial.print("Valore letto:");
   Serial.println(nuovo);
+  */
 
   if (nuovo == NAN_CHECK) return 0;
 
   if (round(nuovo) > (soglia + (soglia *(10 / 100))))
   {
     soglia = nuovo + nuovo *(10 / 100);
-    Serial.println("sono di più");
+    //Serial.println("sono di più");
     return 1;
   }
   else if (round(nuovo) < (soglia - soglia *((10 / 100))))
   {
     soglia = nuovo - nuovo *(10 / 100);
-    Serial.println("sono di meno");
+    //Serial.println("sono di meno");
     return -1;
   }
   else
@@ -86,9 +88,9 @@ int calcolaVariazione(byte nuovo, byte &soglia)
   }
 }
 
+//funzione di impostazione dei font dell'OLED
 void u8g2_prepare()
 {
-  //funzione di impostazione dei font dell'OLED
   u8g2.setFont(u8g2_font_6x10_tf);
   u8g2.setFontRefHeightExtendedText();
   u8g2.setDrawColor(1);
@@ -96,6 +98,9 @@ void u8g2_prepare()
   u8g2.setFontDirection(0);
 }
 
+/*
+Funzione che converte il risultato numerico del controllo della variazione in una stringa ASCII visualizzabile sullo schermo.
+*/
 String esitoVariazione(int numeroVariazione)
 {
   Serial.print(numeroVariazione);
@@ -113,9 +118,9 @@ String esitoVariazione(int numeroVariazione)
   }
 }
 
+// SCRITTURA DELLA SCHERMATA CHE MOSTRA I VALORI RILEVATI A VIDEO
 void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVariazione, int tempVariazione, int presVariazione)
 {
-  // SCRITTURA DELLA SCHERMATA CHE MOSTRA I VALORI RILEVATI A VIDEO
   u8g2.setCursor(30, 5);
   u8g2.print(F("Dati Rilevati"));
   u8g2.setCursor(45, 17);
@@ -124,7 +129,6 @@ void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVari
   u8g2.print(F("hPa"));
   u8g2.setCursor(105, 17);
   u8g2.print(F("C\xb0"));
-  // non spostare sotto questo primo pezzo di codice, se no per farlo grande bisogna istanziare un nuovo font e non ci sta...
   u8g2.setFont(u8g2_font_5x7_tr);
   u8g2.setFontPosTop();
   u8g2.setFontDirection(0);
@@ -170,9 +174,9 @@ void disegna_rilevamento(float valhum, float valtemp, float valpres, int humVari
   }
 }
 
+// funzione di disegno dell'immagine di screensaver
 void u8g2_bitmap()
 {
-  // funzione di disegno dell'animazione
   u8g2.clearBuffer();
   u8g2.drawXBMP(43, 0, IMAGE_WIDTH, IMAGE_HEIGHT, piantina2_piccola_bits);
   u8g2.sendBuffer();
@@ -225,10 +229,12 @@ void loop()
   int tempVariazione = calcolaVariazione(tempFloat, soglia_temperatura);
   int presVariazione = calcolaVariazione(presFloat, soglia_pressione);
 
+  /*
   Serial.println(humFloat);
   Serial.println(tempFloat);
   Serial.println(presFloat);
-
+  */
+  
   u8g2.clearBuffer();
   disegna_rilevamento(humFloat, tempFloat, presFloat, humVariazione, tempVariazione, presVariazione);
   u8g2.sendBuffer();
